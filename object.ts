@@ -112,6 +112,7 @@ const hasRequired: Writers = {
     author: undefined,
 };
 
+// 유추된 객체 타입 유니언 
 const poem = Math.random() > 0.5 
     ? { namae: "Name", pages: 7 }
     : {name: "Name2", rhymes: true};
@@ -130,5 +131,60 @@ const poem = Math.random() > 0.5
     rhymes: boolean;
 }
 */
+
+// 판별된 유니언
+type PoemWithPages = {
+    name: string;
+    pages: number;
+    type: 'pages';
+};
+
+type PoemWithRhymes = {
+    name: string;
+    rhymes: boolean;
+    type: 'rhymes';
+};
+
+type PoemMatch = PoemWithPages | PoemWithRhymes;
+
+const poem2 : PoemMatch = Math.random() > 0.5 
+    ? { name: "Name", pages: 7, type: "pages" }
+    : { name: "Name2", rhymes: true, type: "rhymes"};
+
+if(poem2.type === "pages") {
+    console.log(`It's got pages: ${poem2.pages}`);
+}
+
+poem2.name; // OK
+// poem2.pages; 선택적 타입은 이런 식으로 사용 불가 
+
+if("pages" in poem2) {
+    poem2.pages; // poem2는 PoemWithPages로 좁혀짐 
+} else {
+    poem2.rhymes; // poem2는 PoemWithRhymes로 좁혀짐 
+}
+
+// 교차 타입
+type ArtWork = {
+    genre: string;
+    name: string;
+};
+
+type Writing = {
+    pages: number;
+    name: string;
+};
+
+type WrittenArt = ArtWork & Writing; 
+// 아래와 같이 생성된다.
+/*
+{
+    genre: string;
+    name: string;
+    pages: number;
+}
+*/
+
+type NotPossible = number & string; // type: never
 
 
